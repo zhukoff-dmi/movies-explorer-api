@@ -1,6 +1,3 @@
-require('dotenv').config();
-
-console.log(process.env.NODE_ENV);
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
@@ -9,13 +6,14 @@ const { errors } = require('celebrate');
 const router = require('./routes/index');
 const centralError = require('./middlewares/centralError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const config = require('./config');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(cors());
 
-mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsdb')
+mongoose.connect(config.connectDb)
   .then(() => console.log('Подключено к MongoDB'))
   .catch((err) => {
     console.error('Ошибка подключения к MongoDB:', err);

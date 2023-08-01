@@ -2,12 +2,13 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const config = require('../config');
 const ConflictError = require('../errors/ConflictError');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const AuthorizationError = require('../errors/AuthorizationError');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+// const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports.getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
@@ -61,7 +62,7 @@ module.exports.login = (req, res, next) => {
           }
           const token = jwt.sign(
             { _id: user._id },
-            NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+            config.jwtSecret,
             { expiresIn: '7d' },
           );
           return res.status(200).send({ token });
@@ -79,7 +80,9 @@ module.exports.updateUserInfo = (req, res, next) => {
   )
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
+      if (err.code === 11000) {
+        next(new ConflictError('Такой Email уже используется'));
+      } else if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Переданны некоректные данные'));
       } else {
         next(err);
