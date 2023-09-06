@@ -37,7 +37,7 @@ module.exports.createMovie = celebrate({
     year: Joi.number().required(),
     description: Joi.string().required(),
     image: Joi.string().required().regex(regexUrl),
-    trailer: Joi.string().required().regex(regexUrl),
+    trailerLink: Joi.string().required().regex(regexUrl),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
     thumbnail: Joi.string().required().regex(regexUrl),
