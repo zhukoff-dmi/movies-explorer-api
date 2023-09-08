@@ -16,12 +16,6 @@ module.exports.login = celebrate({
   }),
 });
 
-module.exports.getUserById = celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().required().length(24).hex(),
-  }),
-});
-
 module.exports.updateUserInfo = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
